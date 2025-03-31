@@ -1,3 +1,4 @@
+import java.sql.SQLOutput;
 import java.util.*;
 
 import models.*;
@@ -7,31 +8,27 @@ public class GeneticAlgorithm {
     private static final Random rand = new Random();
 
     public static void main(String[] args) {
-        // 1. Инициализация городов и расстояний между ними
-        List<City> cities = initializeCities(20); // 20 городов для примера
+        List<City> cities = initializeCities();
 
-        // 2. Создание начальной популяции
-        List<Solution> population = initializePopulation(cities, POPULATION_SIZE);
+        List<Solution> population = initializePopulation(cities);
 
-        // 3. Основной цикл генетического алгоритма
+
         for (int generation = 0; generation < MAX_GENERATIONS; generation++) {
-            // Оценка популяции (сортировка по приспособленности)
             Collections.sort(population);
 
-            // Вывод лучшего решения текущего поколения
-            if (generation % 100 == 0) {
-                System.out.println("Generation " + generation + ": Best distance = " +
-                        population.get(0).distanceBetweenCities());
-            }
+            System.out.println("Generation " + generation + ": Best distance = " +
+                    population.get(0).distanceBetweenCities());
 
-            // Селекция (отбор лучших решений)
+            System.out.println("b4 sel");
             selection(population);
 
-            // Кроссовер (скрещивание решений)
+            System.out.println("b4 cros");
             crossover(population);
 
-            // Мутация (случайные изменения)
+            System.out.println("b4 mut");
             mutation(population);
+
+            System.out.println(population.size());
         }
     }
 
@@ -41,50 +38,64 @@ public class GeneticAlgorithm {
         int second;
 
         for (Solution solution : solutions) {
+
+
             do {
                 first = rand.nextInt(solution.getCities().size());
                 second = rand.nextInt(solution.getCities().size());
             }
-            while (first == second);
+            while (first == second || first == 0 || second == 0);
             solution.swapCities(first, second);
         }
 
     }
 
     private static void selection(List<Solution> solutions){
-        Collections.sort(solutions);
-        solutions.remove(solutions.get(solutions.size()-1));
-    }
-
-    private static void crossover(List<Solution> solutions){
-        Random rand = new Random();
-        int begin;
-        int end;
-
-        for (int i = 0; i < solutions.size() / 2; i++){
-            begin = rand.nextInt(solutions.size()/2);
-            end = rand.nextInt(solutions.size()/2);
-            for (int j = begin; j < end; j++){
-                solutions.get(2*i).fulfillThisSolution(begin, end, solutions.get(2*i+1));
-                solutions.get(2*i+1).fulfillThisSolution(begin, end, solutions.get(2*i));
-            }
+        if (solutions.size() >= 2){
+            Collections.sort(solutions);
+            solutions.remove(solutions.get(solutions.size()-1));
         }
     }
 
-    private static List<City> initializeCities(int cityCount) {
+    private static void crossover(List<Solution> solutions) {
+        Random rand = new Random();
+
+        int begin;
+        int end;
+        if (solutions.isEmpty()) return;
+
+        int cityCount = solutions.get(0).getCities().size();
+
+        for (int i = 0; i < solutions.size() / 2; i++) {
+            begin = rand.nextInt(cityCount);
+
+            end = rand.nextInt(cityCount - begin) + begin;
+            Solution parent1 = solutions.get(2 * i);
+            Solution parent2 = solutions.get(2 * i + 1);
+
+            Solution child1 = new Solution(new ArrayList<>(parent1.getCities()));
+            Solution child2 = new Solution(new ArrayList<>(parent2.getCities()));
+
+            child1.fulfillThisSolution(begin, end, parent2);
+            child2.fulfillThisSolution(begin, end, parent1);
+
+            solutions.set(2 * i, child1);
+            solutions.set(2 * i + 1, child2);
+        }
+
+    }
+    private static List<City> initializeCities() {
         List<City> cities = new ArrayList<>();
 
-        // Создаем города
-        for (int i = 0; i < cityCount; i++) {
+        for (int i = 0; i < 20; i++) {
             cities.add(new City("City" + i));
         }
 
-        // Заполняем расстояния между городами (случайные значения для примера)
-        for (int i = 0; i < cityCount; i++) {
+        for (int i = 0; i < 20; i++) {
             City current = cities.get(i);
             Map<String, Long> distances = new LinkedHashMap<>();
 
-            for (int j = 0; j < cityCount; j++) {
+            for (int j = 0; j < 20; j++) {
                 if (i != j) {
                     distances.put(cities.get(j).getName(), (long) (10 + rand.nextInt(90)));
                 }
@@ -96,11 +107,10 @@ public class GeneticAlgorithm {
         return cities;
     }
 
-    private static List<Solution> initializePopulation(List<City> cities, int populationSize) {
+    private static List<Solution> initializePopulation(List<City> cities) {
         List<Solution> population = new ArrayList<>();
 
-        for (int i = 0; i < populationSize; i++) {
-            // Создаем копию списка городов и перемешиваем его
+        for (int i = 0; i < GeneticAlgorithm.POPULATION_SIZE; i++) {
             List<City> shuffledCities = new ArrayList<>(cities);
             Collections.shuffle(shuffledCities);
 

@@ -44,20 +44,15 @@ public class Solution implements Comparable<Solution> {
         return cities.toString() + "\nTotal Distance: " + distanceBetweenCities();
     }
 
-    private List<City> getSegment(int firstIndex, int lastIndex) {
-        List<City> citiesToReturn = new ArrayList<>();
-
-        for (int i = firstIndex; i <= lastIndex; i++) {
-            citiesToReturn.add(cities.get(i));
-        }
-        return citiesToReturn;
-    }
 
     public void fulfillThisSolution(int first, int last, Solution solution) {
-        List<City> citiesToReturn = getSegment(first, last);
-        for (int i = 0; i < citiesToReturn.size(); i++) {
+        List<City> citiesToReturn = new ArrayList<>();
+        for (int i = 0; i < solution.cities.size(); i++) {
             if (i < first || i > last) {
                 citiesToReturn.add(i, cities.get(i));
+            }
+            else {
+                citiesToReturn.add(i, this.cities.get(i));
             }
         }
         this.cities.clear();

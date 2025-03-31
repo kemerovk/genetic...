@@ -32,4 +32,9 @@ public class City {
     public long getDistanceBetweenThisAndSelected(String city) {
         return distanceBetweenThisAndOthers.get(city);
     }
+
+    @Override
+    public String toString() {
+        return "City [name=" + name + ", distanceBetweenThisAndOthers=" + distanceBetweenThisAndOthers + "]";
+    }
 }
