@@ -1,0 +1,26 @@
+<component name="ArtifactManager">
+  <artifact type="exploded-war" external-system-id="Maven" name="preparing_for_diploma:war exploded">
+    <output-path>$PROJECT_DIR$/target/untitled</output-path>
+    <properties id="maven-jee-properties">
+      <options>
+        <exploded>true</exploded>
+        <module>preparing_for_diploma</module>
+        <packaging>war</packaging>
+      </options>
+    </properties>
+    <root id="root">
+      <element id="directory" name="WEB-INF">
+        <element id="directory" name="classes">
+          <element id="module-output" name="preparing_for_diploma" />
+        </element>
+        <element id="directory" name="lib">
+          <element id="library" level="project" name="Maven: org.jfree:jfreechart:1.5.5" />
+        </element>
+      </element>
+      <element id="directory" name="META-INF">
+        <element id="file-copy" path="$PROJECT_DIR$/target/untitled/META-INF/MANIFEST.MF" />
+      </element>
+      <element id="javaee-facet-resources" facet="preparing_for_diploma/web/Web" />
+    </root>
+  </artifact>
+</component>
